@@ -7,7 +7,7 @@ async function getData() {
 	countEl.innerText = count;
 	avgEl.innerText = avg.toFixed(2);
 
-	const { len } = await fetch("/data/queue.json").then(res => res.json());
+	const { len } = await fetch("./data/queue.json").then(res => res.json());
 	lenEl.innerText = len;
 }
 

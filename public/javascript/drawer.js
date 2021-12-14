@@ -23,9 +23,9 @@ function drawPreview() {
 	const background = new Image();
 	background.onload = () => {
 		ctx.drawImage(background, 0, 0, canvasWidth, canvasHeight);
-		overlay.src = '/images/current.png?r=' + performance.now();
+		overlay.src = './images/current.png?r=' + performance.now();
 	};
-	background.src = '/images/canvas.png?r=' + performance.now();
+	background.src = './images/canvas.png?r=' + performance.now();
 
 
 }
@@ -47,7 +47,7 @@ function drawLive() {
 	background.onload = () => {
 		ctx.drawImage(background, 0, 0, canvasWidth, canvasHeight);
 	};
-	background.src = '/images/canvas.png?r=' + performance.now();
+	background.src = './images/canvas.png?r=' + performance.now();
 }
 
 drawLive()

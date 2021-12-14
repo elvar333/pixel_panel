@@ -28,7 +28,7 @@ app.get("/", async (req, res) => {
 	res.render("index.ejs", { count, avg, offsetX, offsetY, queue: queue.length, doDraw });
 });
 
-app.get("/data", (req, res) => {
+app.get("/queue", (req, res) => {
 	if (doDraw) {
 		const pixels = queue.splice(0, Math.min(15, queue.length));
 		for (let i = 0; i < pixels.length; i++) {
