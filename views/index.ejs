@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+		
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+		
+		<link href="/stylesheets/canvas.css" rel="stylesheet">
+		<title>Sup3r c00l 4dm1n p4n3l!</title>
+  </head>
+  <body>
+		<script>
+			function toggleDraw() {
+				fetch("/toggle").then(res => res.json()).then(r => {
+					console.log(r);
+				})
+			}
+		</script>
+		<div class="container">
+			<h1 class="text-center">
+				Pixels available: <span id="count"><%= count %></span>
+			</h1>
+			<div class="row">
+				<div class="col">
+					<h3 class="text-center">Average last 5 minutes: <span id="avg"><%= avg.toFixed(2); %></span> PPS</h3>
+				</div>
+				<div class="col">
+					<h3 class="text-center">Pixels in queue: <span id="len"><%= queue %></span></h3>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-10">
+					<form action="/upload" method="POST" enctype="multipart/form-data">
+						<div class="row mb-3">
+							<div class="col">
+								<label for="formFile" class="form-label">Input image to paint.</label>
+								<input required class="form-control" accept=".png" type="file" name="image">
+								<div class="form-text">
+									Only accepts .png files.
+								</div>
+							</div>
+							<div class="col">
+								<label for="x" class="form-label">X</label>
+								<input required id="x" type="range" value="<%= offsetX %>" max="319" class="form-control" name="x">
+							</div>
+							<div class="col">
+								<label for="y" class="form-label">Y</label>
+								<input required id="y" type="range" value="<%= offsetY %>" min="0" max="239" class="form-control" name="y">
+							</div>
+						</div>
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</form>					
+				</div>
+				<div class="col">
+					<div class="form-switch">
+						<% if (doDraw) { %>
+							<input class="form-check-input" type="checkbox" id="draw" onclick="toggleDraw()" checked>
+						<% } else { %>
+							<input class="form-check-input" type="checkbox" id="draw" onclick="toggleDraw()">
+						<% } %>
+						<label class="form-check-label">Drawing enabled</label>
+					</div>
+					<h3>Current image</h3>
+					<img src="/images/current.png" alt="Please upload an image">
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<h3>Preview</h3>
+					<canvas id="preview">
+					</canvas>
+				</div>
+				<div class="col">
+					<h3>Live</h3>
+					<canvas id="live">
+					</canvas>
+				</div>
+			</div>
+		</div>
+		<script src="/javascript/drawer.js"></script>
+		<script src="/javascript/data.js"></script>
+  </body>
+</html>
