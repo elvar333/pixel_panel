@@ -28,7 +28,7 @@ app.get("/", async (req, res) => {
 	res.render("index.ejs", { count, avg, offsetX, offsetY, queue: queue.length, doDraw });
 });
 
-app.get("data", (req, res) => {
+app.get("/data", (req, res) => {
 	if (doDraw) {
 		const pixels = queue.splice(0, Math.min(15, queue.length));
 		for (let i = 0; i < pixels.length; i++) {
@@ -40,13 +40,13 @@ app.get("data", (req, res) => {
 	res.json({});
 });
 
-app.get("toggle", (req, res) => {
+app.get("/toggle", (req, res) => {
 	doDraw = !doDraw;
 	res.json({ doDraw });
 });
 
 
-app.use("upload", fileUpload);
+app.use("/upload", fileUpload);
 
 app.listen(port, () => console.log(`Listening on port ${port}!`));
 
