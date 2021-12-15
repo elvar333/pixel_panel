@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
+import Jimp from 'jimp';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
 
@@ -47,7 +48,7 @@ app.get("/queue", (req, res) => {
 		fs.writeFileSync(path.join(__dirname, "public", "data", "queue.json"), JSON.stringify({ len: queue.length }));
 		res.json(pixels);
 	} else {
-		res.json({});
+		res.json([]);
 	}
 });
 
