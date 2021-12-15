@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
-import Jimp from 'jimp';
+import {spawn} from 'child_process';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
 
@@ -13,8 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const port = 1338;
 
-const queue = [];
-let drawData = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "draw.json"), "utf8"));
+let queue = [];
 let doDraw = false;
 
 const storage = multer.diskStorage({
@@ -45,7 +44,6 @@ app.get("/queue", (req, res) => {
 		for (let i = 0; i < pixels.length; i++) {
 			pixels[i] = JSON.parse(pixels[i]);
 		}
-		fs.writeFileSync(path.join(__dirname, "public", "data", "queue.json"), JSON.stringify({ len: queue.length }));
 		res.json(pixels);
 	} else {
 		res.json([]);
@@ -58,7 +56,7 @@ app.get("/toggle", (req, res) => {
 });
 
 app.post("/upload", upload.single("image"), (req, res) => {
-	parseImg(req.file.path, parseInt(req.body.x), parseInt(req.body.y));
+	fs.writeFileSync(path.join(__dirname, "data", "offset.json"), JSON.stringify({ offsetX: offsetX, offsetY: offsetY }));
 	res.redirect("back");
 });
 
@@ -66,16 +64,13 @@ app.listen(port, () => console.log(`Listening on port ${port}!`));
 
 async function getData() {
 	try{
-		const pixelDataString = await fetch("http://challs.xmas.htsp.ro:3002/pixels.txt").then(r => r.text());
-		for (const line of pixelDataString.split("\n").slice(0, -1)) {
-			const [x, y, r, g, b, team] = line.split(" ");
-			if (drawData[x+","+y] !== `${parseInt(r).toString(16).padStart(2, '0')}${parseInt(g).toString(16).padStart(2, '0')}${parseInt(b).toString(16).padStart(2, '0')} ${team}`) {
-				const data = JSON.stringify({ pos: {x: parseInt(x), y: parseInt(y)}, color: `${parseInt(r).toString(16).padStart(2, '0')}${parseInt(g).toString(16).padStart(2, '0')}${parseInt(b).toString(16).padStart(2, '0')}`});
-				if (queue.includes(data)) continue;
-				queue.push(data);
-			}
-		}
-		fs.writeFileSync(path.join(__dirname, "public", "data", "queue.json"), JSON.stringify({ len: queue.length }));
+		const python = spawn("python", [path.join(__dirname, "diff.py")]);
+		python.on('close', (code) => {
+			console.log(`child process exited with code ${code}`);
+
+			queue = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "queue.json"), "utf8"));
+		});
+
 	
 		const imageData = await fetch("http://challs.xmas.htsp.ro:3002/canvas.png");
 		imageData.body.pipe(fs.createWriteStream(path.join(__dirname, "public", "images", "canvas.png")));
@@ -86,25 +81,4 @@ async function getData() {
 }
 
 setInterval(getData, 15 * 1000);
-
-function parseImg(imgPath, offsetX, offsetY) {
-	drawData = {};
-	Jimp.read(imgPath, (err, img) => {
-		for (let x = 0; x < img.bitmap.width; x++) {
-			for (let y = 0; y < img.bitmap.height; y++) {
-				const pixel = img.getPixelColor(x, y);
-				if (pixel != 0) {
-					const r = Jimp.intToRGBA(pixel).r;
-					const g = Jimp.intToRGBA(pixel).g;
-					const b = Jimp.intToRGBA(pixel).b;
-					if (x+offsetX >= 320 || y+offsetY >= 240) continue;
-					drawData[(x+offsetX).toString()+','+(y+offsetY).toString()] = `${parseInt(r).toString(16).padStart(2, '0')}${parseInt(g).toString(16).padStart(2, '0')}${parseInt(b).toString(16).padStart(2, '0')} 42`;
-				}
-			}
-		}
-		fs.writeFileSync(path.join(__dirname, "data", "draw.json"), JSON.stringify(pixelData));
-		fs.writeFileSync(path.join(__dirname, "data", "offset.json"), JSON.stringify({ offsetX: offsetX, offsetY: offsetY }));
-	});
-}
-
 
