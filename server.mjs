@@ -42,7 +42,7 @@ app.get("/queue", (req, res) => {
 	if (doDraw) {
 		const pixels = queue.splice(0, Math.min(15, queue.length));
 		for (let i = 0; i < pixels.length; i++) {
-			pixels[i] = JSON.parse(pixels[i]);
+			pixels[i] = pixels[i];
 		}
 		res.json(pixels);
 	} else {
