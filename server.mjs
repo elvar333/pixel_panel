@@ -56,7 +56,8 @@ app.get("/toggle", (req, res) => {
 });
 
 app.post("/upload", upload.single("image"), (req, res) => {
-	fs.writeFileSync(path.join(__dirname, "data", "offset.json"), JSON.stringify({ offsetX: offsetX, offsetY: offsetY }));
+	const { x, y } = req.body;
+	fs.writeFileSync(path.join(__dirname, "data", "offset.json"), JSON.stringify({ offsetX: parseInt(x), offsetY: parseInt(y) }));
 	res.redirect("back");
 });
 
@@ -64,8 +65,8 @@ app.listen(port, () => console.log(`Listening on port ${port}!`));
 
 async function getData() {
 	try{
-		const python = spawn("python", [path.join(__dirname, "diff")]);
-		python.on('close', (code) => {
+		const diff = spawn(path.join(__dirname, "diff"));
+		diff.on('close', (code) => {
 			console.log(`child process exited with code ${code}`);
 
 			queue = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "queue.json"), "utf8"));
