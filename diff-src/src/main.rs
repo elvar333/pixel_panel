@@ -42,19 +42,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 	
 	let mut pixels: Vec<PixelData> = Vec::new();
 	for pixel in img.pixels() {
+		let index_y = pixel.1 as usize + offset_y as usize;
+		let index_x = pixel.0 as usize + offset_x as usize;
 		if pixel.2[3] == 0 {
 			continue;
 		}
-		let index_y = pixel.1 as usize + offset_y as usize;
-		let index_x = pixel.0 as usize + offset_x as usize;
 		if index_x >= 320 || index_y >= 240 {
 			continue;
 		}
 		if canvas[index_y][index_x] == -1 {
 			pixels.push(PixelData {
 				pos: Pos{
-					x: index_y as u32, 
-					y: index_x as u32
+					x: index_x as u32, 
+					y: index_y as u32
 				},
 				color: format!("{:02x}{:02x}{:02x}", pixel.2[0], pixel.2[1], pixel.2[2])
 			});
