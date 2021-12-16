@@ -47,6 +47,13 @@ app.get("/queue", (req, res) => {
 	}
 });
 
+app.get("/stats", (req, res) => {
+	res.json({
+		"queue": queue.length,
+		"doDraw": doDraw
+	})
+});
+
 app.get("/toggle", (req, res) => {
 	doDraw = !doDraw;
 	res.json({ doDraw });
@@ -78,5 +85,5 @@ async function getData() {
 	}
 }
 
-setInterval(getData, 15 * 1000);
+setInterval(getData, 7 * 1000);
 

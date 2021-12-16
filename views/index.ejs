@@ -59,11 +59,11 @@
 				<div class="col">
 					<div class="form-switch">
 						<% if (doDraw) { %>
-							<input class="form-check-input" type="checkbox" id="draw" onclick="toggleDraw()" checked>
+							<input id="draw" class="form-check-input" type="checkbox" id="draw" onclick="toggleDraw()" checked>
 						<% } else { %>
-							<input class="form-check-input" type="checkbox" id="draw" onclick="toggleDraw()">
+							<input id="draw" class="form-check-input" type="checkbox" id="draw" onclick="toggleDraw()">
 						<% } %>
-						<label class="form-check-label">Drawing enabled</label>
+							<label class="form-check-label">Drawing enabled</label>
 					</div>
 					<h3>Current image</h3>
 					<img src="./images/current.png" alt="Please upload an image">
