@@ -12,6 +12,9 @@ async function getData() {
 	if (doDraw) {
 		drawEl.checked = true;
 	}
+	else {
+		drawEl.checked = false;
+	}
 }
 
 setInterval(getData, 1000);
