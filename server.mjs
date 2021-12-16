@@ -41,12 +41,8 @@ app.get("/", async (req, res) => {
 app.get("/queue", (req, res) => {
 	if (doDraw) {
 		const pixels = queue.splice(0, Math.min(15, queue.length));
-		for (let i = 0; i < pixels.length; i++) {
-			pixels[i] = pixels[i];
-		}
 		res.json(pixels);
-	} else {
-		res.json([]);
+	} else {		res.json([]);
 	}
 });
 

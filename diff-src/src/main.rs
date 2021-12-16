@@ -13,7 +13,6 @@ struct PixelData {
 	pos: Pos,
 	color: String
 }
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
 	let mut canvas = [[-1; 320]; 240];
@@ -54,8 +53,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 		if canvas[index_y][index_x] == -1 {
 			pixels.push(PixelData {
 				pos: Pos{
-					x: pixel.0, 
-					y: pixel.1
+					x: index_y, 
+					y: index_x
 				},
 				color: format!("{:02x}{:02x}{:02x}", pixel.2[0], pixel.2[1], pixel.2[2])
 			});
