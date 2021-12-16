@@ -64,7 +64,7 @@ app.listen(port, () => console.log(`Listening on port ${port}!`));
 
 async function getData() {
 	try{
-		const python = spawn("python", [path.join(__dirname, "diff.py")]);
+		const python = spawn("python", [path.join(__dirname, "diff")]);
 		python.on('close', (code) => {
 			console.log(`child process exited with code ${code}`);
 
