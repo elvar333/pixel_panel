@@ -53,8 +53,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 		if canvas[index_y][index_x] == -1 {
 			pixels.push(PixelData {
 				pos: Pos{
-					x: index_y, 
-					y: index_x
+					x: index_y as u32, 
+					y: index_x as u32
 				},
 				color: format!("{:02x}{:02x}{:02x}", pixel.2[0], pixel.2[1], pixel.2[2])
 			});
