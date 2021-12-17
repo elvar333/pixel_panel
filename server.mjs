@@ -34,7 +34,12 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get("/", async (req, res) => {
 	const { offsetX, offsetY } = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "offset.json"), "utf8"));
-	const { count, avg } = await fetch("https://piebot.xyz/ctf/pixels/status").then(r => r.json());
+	try {
+		const { count, avg } = await fetch("localhost:13337/status").then(r => r.json());
+	} catch (e) {
+		const count = 0;
+		const avg = 0;
+	}
 	res.render("index.ejs", { count, avg, offsetX, offsetY, queue: queue.length, doDraw });
 });
 
