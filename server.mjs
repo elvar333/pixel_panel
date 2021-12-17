@@ -36,11 +36,12 @@ app.get("/", async (req, res) => {
 	const { offsetX, offsetY } = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "offset.json"), "utf8"));
 	try {
 		const { count, avg } = await fetch("localhost:13337/status").then(r => r.json());
+		res.render("index.ejs", { count, avg, offsetX, offsetY, queue: queue.length, doDraw });
 	} catch (e) {
 		const count = 0;
 		const avg = 0;
+		res.render("index.ejs", { count, avg, offsetX, offsetY, queue: queue.length, doDraw });
 	}
-	res.render("index.ejs", { count, avg, offsetX, offsetY, queue: queue.length, doDraw });
 });
 
 app.get("/queue", (req, res) => {
