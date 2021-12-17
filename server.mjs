@@ -73,7 +73,11 @@ async function getData() {
 		diff.on('close', (code) => {
 			console.log(`child process exited with code ${code}`);
 
-			queue = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "queue.json"), "utf8"));
+			try {
+				queue = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "queue.json"), "utf8"));
+			} catch (e) {
+				console.log(`[Error] ${e}`);
+			}
 		});
 
 	
