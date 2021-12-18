@@ -14,6 +14,9 @@ struct PixelData {
 	color: String
 }
 
+fn clamp_to_15bit(val: f32) -> i32 {
+	return (((val / 255_f32) * 31_f32).floor() * 255_f32 / 31_f32).floor() as i32;
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -44,14 +47,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 	for pixel in img.pixels() {
 		let index_y = pixel.1 as usize + offset_y as usize;
 		let index_x = pixel.0 as usize + offset_x as usize;
-		let color_string = format!("{:02x}{:02x}{:02x}", pixel.2[0], pixel.2[1], pixel.2[2]).to_string();
+
+		let r = clamp_to_15bit(pixel.2[0] as f32);
+		let g = clamp_to_15bit(pixel.2[1] as f32);
+		let b = clamp_to_15bit(pixel.2[2] as f32);
+		let color_string = format!("{:02x}{:02x}{:02x}", r, g, b).to_string();
+		let color_value = i32::from_str_radix(&color_string, 16).unwrap();
+
 		if pixel.2[3] == 0 {
 			continue;
 		}
 		if index_x >= 320 || index_y >= 240 {
 			continue;
 		}
-		if canvas[index_y][index_x].0 != i32::from_str_radix(&color_string, 16).unwrap() || canvas[index_y][index_x].1 != 42 {
+
+		if canvas[index_y][index_x].0 != color_value || canvas[index_y][index_x].1 != 42 {
 			pixels.push(PixelData {
 				pos: Pos{
 					x: index_x as u32, 
