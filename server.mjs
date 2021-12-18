@@ -97,3 +97,16 @@ async function getData() {
 
 setInterval(getData, 7 * 1000);
 
+let currFrame = 1;
+
+function updateFrame() {
+	if (currFrame > 43) {
+		currFrame = 1;
+	}
+	fs.copyFileSync(path.join(__dirname, "frames", `${String(currFrame).padStart(2, '0')}.png`), path.join(__dirname, "public", "images", "current.png") );
+	currFrame++;
+}
+
+if (fs.existsSync(path.join(__dirname, "frames"))) {
+	setInterval(updateFrame, 90 * 1000);
+}
