@@ -13,9 +13,11 @@ struct PixelData {
 	pos: Pos,
 	color: String
 }
+
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-	let mut canvas = [[-1; 320]; 240];
+	let mut canvas = [[(-1, -1) as (i32, i32); 320]; 240];
 	let res = reqwest::get("http://challs.xmas.htsp.ro:3002/pixels.txt").await?;
 	let body = res.text().await?;
 	for line in body.lines() {
@@ -28,10 +30,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 		let team = parts.next().unwrap().parse::<u32>().unwrap();
 		let color_string = format!("{:02x}{:02x}{:02x}", r, g, b).to_string();
 		let color_value = i32::from_str_radix(&color_string, 16).unwrap();
-		canvas[y as usize][x as usize] = color_value;
-		if team == 42 {
-			canvas[y as usize][x as usize] = -1;
-		}
+		canvas[y as usize][x as usize] = (color_value, team as i32);
 	}
 
 	let img = image::open("./public/images/current.png").unwrap();
@@ -52,7 +51,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 		if index_x >= 320 || index_y >= 240 {
 			continue;
 		}
-		if canvas[index_y][index_x] != i32::from_str_radix(&color_string, 16).unwrap() && canvas[index_y][index_x] != -1 {
+		if canvas[index_y][index_x] != (i32::from_str_radix(&color_string, 16).unwrap(), 42) {
 			pixels.push(PixelData {
 				pos: Pos{
 					x: index_x as u32, 
