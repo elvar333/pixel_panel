@@ -51,7 +51,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 		if index_x >= 320 || index_y >= 240 {
 			continue;
 		}
-		if canvas[index_y][index_x] != (i32::from_str_radix(&color_string, 16).unwrap(), 42) {
+		if canvas[index_y][index_x].0 != i32::from_str_radix(&color_string, 16).unwrap() || canvas[index_y][index_x].1 != 42 {
 			pixels.push(PixelData {
 				pos: Pos{
 					x: index_x as u32, 
