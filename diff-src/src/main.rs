@@ -14,26 +14,24 @@ struct PixelData {
 	color: String
 }
 
-fn clamp_to_15bit(val: f32) -> i32 {
-	return (((val / 255_f32) * 31_f32).floor() * 255_f32 / 31_f32).floor() as i32;
+fn clamp_to_15bit(val: f32) -> i16 {
+	return (((val / 255_f32) * 31_f32).floor() * 255_f32 / 31_f32).floor() as i16;
 }
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-	let mut canvas = [[(-1, -1) as (i32, i32); 320]; 240];
+	let mut canvas = [[((-1,-1,-1), -1); 320]; 240];
 	let res = reqwest::get("http://challs.xmas.htsp.ro:3002/pixels.txt").await?;
 	let body = res.text().await?;
 	for line in body.lines() {
 		let mut parts = line.split(" ");
 		let x = parts.next().unwrap().parse::<u32>().unwrap();
 		let y = parts.next().unwrap().parse::<u32>().unwrap();
-		let r = parts.next().unwrap().parse::<u32>().unwrap();
-		let g = parts.next().unwrap().parse::<u32>().unwrap();
-		let b = parts.next().unwrap().parse::<u32>().unwrap();
+		let r = parts.next().unwrap().parse::<i16>().unwrap();
+		let g = parts.next().unwrap().parse::<i16>().unwrap();
+		let b = parts.next().unwrap().parse::<i16>().unwrap();
 		let team = parts.next().unwrap().parse::<u32>().unwrap();
-		let color_string = format!("{:02x}{:02x}{:02x}", r, g, b).to_string();
-		let color_value = i32::from_str_radix(&color_string, 16).unwrap();
-		canvas[y as usize][x as usize] = (color_value, team as i32);
+		canvas[y as usize][x as usize] = ((r, g, b), team as i16);
 	}
 
 	let img = image::open("./public/images/current.png").unwrap();
@@ -51,8 +49,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 		let r = clamp_to_15bit(pixel.2[0] as f32);
 		let g = clamp_to_15bit(pixel.2[1] as f32);
 		let b = clamp_to_15bit(pixel.2[2] as f32);
-		let color_string = format!("{:02x}{:02x}{:02x}", r, g, b).to_string();
-		let color_value = i32::from_str_radix(&color_string, 16).unwrap();
+		let color_string = format!("{:02x}{:02x}{:02x}", pixel.2[0], pixel.2[1], pixel.2[2]).to_string();
 
 		if pixel.2[3] == 0 {
 			continue;
@@ -61,7 +58,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 			continue;
 		}
 
-		if canvas[index_y][index_x].0 != color_value || canvas[index_y][index_x].1 != 42 {
+		if canvas[index_y][index_x].0 != (r, g, b) || canvas[index_y][index_x].1 != 42 {
+			//println!("{} {} {:?} {} {:?}", index_x, index_y, canvas[index_y][index_x].0, canvas[index_y][index_x].1, (r, g, b));
 			pixels.push(PixelData {
 				pos: Pos{
 					x: index_x as u32, 
