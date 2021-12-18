@@ -28,8 +28,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 		let team = parts.next().unwrap().parse::<u32>().unwrap();
 		let color_string = format!("{:02x}{:02x}{:02x}", r, g, b).to_string();
 		let color_value = i32::from_str_radix(&color_string, 16).unwrap();
+		canvas[y as usize][x as usize] = color_value;
 		if team == 42 {
-			canvas[y as usize][x as usize] = color_value;
+			canvas[y as usize][x as usize] = -1;
 		}
 	}
 
@@ -44,20 +45,20 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 	for pixel in img.pixels() {
 		let index_y = pixel.1 as usize + offset_y as usize;
 		let index_x = pixel.0 as usize + offset_x as usize;
-		let color_string = format!("{:02x}{:02x}{:02x}", pixel.2[0], pixel.2[1], pixel.2[2]);
+		let color_string = format!("{:02x}{:02x}{:02x}", pixel.2[0], pixel.2[1], pixel.2[2]).to_string();
 		if pixel.2[3] == 0 {
 			continue;
 		}
 		if index_x >= 320 || index_y >= 240 {
 			continue;
 		}
-		if canvas[index_y][index_x] == -1 || (canvas[index_y][index_x] != i32::from_str_radix(&color_string, 16).unwrap() && canvas[index_y][index_x] != -1) {
+		if canvas[index_y][index_x] != i32::from_str_radix(&color_string, 16).unwrap() && canvas[index_y][index_x] != -1 {
 			pixels.push(PixelData {
 				pos: Pos{
 					x: index_x as u32, 
 					y: index_y as u32
 				},
-				color: format!("{:02x}{:02x}{:02x}", pixel.2[0], pixel.2[1], pixel.2[2])
+				color: color_string
 			});
 		}
 	}
