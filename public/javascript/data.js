@@ -4,8 +4,8 @@ const lenEl = document.getElementById("len");
 const drawEl = document.getElementById("draw");
 
 async function getData() {
-	const { count, avg } = await fetch("https://piebot.xyz/ctf/pixels/status").then(res => res.json());
-	const { queue, doDraw } = await fetch("/stats").then(res => res.json());
+	const { count, avg } = await fetch("/ctf/pixels/status").then(res => res.json());
+	const { queue, doDraw } = await fetch("/ctf/canvas/stats").then(res => res.json());
 	countEl.innerText = count;
 	avgEl.innerText = avg.toFixed(2);
 	lenEl.innerText = queue;
