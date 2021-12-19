@@ -46,7 +46,10 @@ app.get("/", async (req, res) => {
 
 app.get("/queue", (req, res) => {
 	if (doDraw) {
-		const pixels = queue.splice(Math.floor(Math.random() * queue.length), 15);
+		const pixels = [];
+		for (let i; i < 15; i++) {
+			pixels.push(queue.splice(Math.floor(Math.random() * queue.length), 1)[0]);
+		}
 		res.json(pixels);
 	} else {
 		res.json([]);
