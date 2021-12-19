@@ -65,6 +65,14 @@ app.get("/stats", (req, res) => {
 
 app.get("/toggle", (req, res) => {
 	doDraw = !doDraw;
+	if (doDraw && fs.existsSync(path.join(__dirname, "frames"))) {
+		totalFrames = fs.readdirSync(path.join(__dirname, "frames")).length;
+	
+		animateInt =  setInterval(updateFrame, 90 * 1000);
+	} else {
+		clearInterval(animateInt);
+	}
+
 	res.json({ doDraw });
 });
 
@@ -102,6 +110,7 @@ setInterval(getData, 7 * 1000);
 
 let currFrame = 1;
 let totalFrames = 0;
+let animateInt;
 
 function updateFrame() {
 	if (currFrame > totalFrames) {
@@ -109,10 +118,4 @@ function updateFrame() {
 	}
 	fs.copyFileSync(path.join(__dirname, "frames", `${String(currFrame).padStart(4, '0')}.png`), path.join(__dirname, "public", "images", "current.png") );
 	currFrame++;
-}
-
-if (fs.existsSync(path.join(__dirname, "frames"))) {
-	totalFrames = fs.readdirSync(path.join(__dirname, "frames")).length;
-
-	setInterval(updateFrame, 90 * 1000);
 }
